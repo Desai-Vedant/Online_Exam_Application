@@ -57,7 +57,7 @@ function LoginPage() {
         .then((response) => {
           // Save data locally only if the response is successful
           localStorage.setItem("user", JSON.stringify(response.data));
-          navigate(`/${value ? "adminhome" : "userhome"}`);
+          navigate(`/${value ? "adminhome" : "studenthome"}`);
         })
         .catch((error) => {
           // Do not save data or navigate on error
@@ -87,12 +87,12 @@ function LoginPage() {
       </Typography>
       <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
         <Tabs value={value} onChange={handleChange} centered>
-          <Tab label="Customer" />
+          <Tab label="Student" />
           <Tab label="Admin" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        {/* Customer Login Form */}
+        {/* Student Login Form */}
         <TextField
           label="User ID"
           variant="outlined"

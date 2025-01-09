@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-const UserPrivateComponent = () => {
+const StudentPrivateComponent = () => {
   const data = localStorage.getItem("user");
   let auth = false;
 
@@ -13,4 +13,4 @@ const UserPrivateComponent = () => {
   return !auth ? <Outlet /> : <Navigate to="/login" />;
 };
 
-export default UserPrivateComponent;
+export default StudentPrivateComponent;

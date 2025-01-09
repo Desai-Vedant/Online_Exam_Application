@@ -53,7 +53,7 @@ export default function MenuAppBar() {
         <Toolbar>
           {/* Left Title Area */}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Blog Zone
+            Exam Zone
           </Typography>
 
           {/* Right Links Area */}
@@ -76,12 +76,18 @@ export default function MenuAppBar() {
                   <Button color="inherit" component={Link} to="/adminhome">
                     Home
                   </Button>
+                  <Button color="inherit" component={Link} to="/createexam">
+                    Create Exam
+                  </Button>
                 </>
               ) : (
                 <>
                   {/* User Routes */}
-                  <Button color="inherit" component={Link} to="/userhome">
+                  <Button color="inherit" component={Link} to="/studenthome">
                     Home
+                  </Button>
+                  <Button color="inherit" component={Link} to="/veiwresults">
+                    View Results
                   </Button>
                 </>
               )}
