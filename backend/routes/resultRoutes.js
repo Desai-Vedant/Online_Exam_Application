@@ -4,11 +4,12 @@ import {
   deleteResult,
   viewResult,
 } from "../controllers/resultController.js";
+import authenticateToken from "../utils/authorization.js";
 
 const router = express.Router();
 
-router.post("/create", createResult);
-router.post("/delete", deleteResult);
-router.post("/view", viewResult);
+router.post("/create", authenticateToken, createResult);
+router.post("/delete", authenticateToken, deleteResult);
+router.post("/view", authenticateToken, viewResult);
 
 export default router;

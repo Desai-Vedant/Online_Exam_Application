@@ -1,4 +1,4 @@
-import Exam from "../models/Exam";
+import Exam from "../models/Exam.js";
 
 export const createExam = async (req, res) => {
   // Input - title, description, passingMarks, questions (list of questions, with options, correct answer and marks )
@@ -6,15 +6,15 @@ export const createExam = async (req, res) => {
 
   try {
     const { title, description, passingMarks, questions } = req.body;
-    const { userId } = req.user.userId;
+    const teacherId = req.user.userId;
     const creationDate = new Date().toISOString().split("T")[0];
     const exam = {
       title,
+      teacherId,
       description,
       passingMarks,
       questions,
       creationDate,
-      teacherId: userId,
     };
     const createdExam = await Exam.create(exam);
 
@@ -47,7 +47,7 @@ export const deleteExam = async (req, res) => {
     }
 
     if (existingExam.teacherId == userId) {
-      const deletedExam = Exam.findByIdAndDelete(examId);
+      const deletedExam = await Exam.findByIdAndDelete(examId);
 
       if (!deletedExam) {
         res.status(500).json({ message: "Failed To Delete Exam" });
@@ -66,23 +66,36 @@ export const deleteExam = async (req, res) => {
 };
 
 export const viewExam = async (req, res) => {
-  // Input - None
-  // Other Data - userId from req.user.userId and isadmin from req.user.isadmin
-  // Return - All Exams if isadmin is false else return all exams with teacherId equal to userId
-  const userId = req.user.userId;
-  const isadmin = req.user.isadmin;
+  try {
+    // Input - None
+    // Other Data - userId from req.user.userId and isadmin from req.user.isadmin
+    // Return - All Exams if isadmin is false else return all exams with teacherId equal to userId
+    const userId = req.user.userId;
+    const isadmin = req.user.isadmin;
 
-  if (!isadmin) {
-    const exams = await Exam.find({ teacherId: userId });
-    if (!exams) {
-      res.status(400).json({ message: "No Exams Found" });
+    if (isadmin) {
+      // Fetch exams created by this teacher
+      const exams = await Exam.find({ teacherId: userId });
+      if (!exams) {
+        return res.status(400).json({ message: "No Exams Found" });
+      }
+      return res
+        .status(200)
+        .json({ message: "Exams Fetched successfully.", exams });
     }
-    res.status(200).json({ message: "Exams Fetched successfully." }, exams);
-  }
 
-  const exams = await Exam.find();
-  if (!exams) {
-    res.status(400).json({ message: "No Exams Found" });
+    // Fetch all exams for Student
+    const exams = await Exam.find();
+    if (!exams) {
+      return res.status(200).json({ message: "No Exams Found", exams });
+    }
+    return res
+      .status(200)
+      .json({ message: "Exams Fetched successfully.", exams });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error while getting Exams Data",
+      error: error.message,
+    });
   }
-  res.status(200).json({ message: "Exams Fetched successfully." }, exams);
 };

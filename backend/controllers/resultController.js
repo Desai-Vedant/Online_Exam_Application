@@ -1,5 +1,5 @@
-import Exam from "../models/Exam";
-import Result from "../models/Result";
+import Exam from "../models/Exam.js";
+import Result from "../models/Result.js";
 
 export const createResult = async (req, res) => {
   // Inputs : examId, totalMarks, obtainedMarks from req.body
@@ -13,9 +13,9 @@ export const createResult = async (req, res) => {
 
     const result = { examId, studentId, appearDate, totalMarks, obtainedMarks };
 
-    const createdResult = Result.create(result);
+    const createdResult = await Result.create(result);
 
-    if (!result) {
+    if (!createdResult) {
       return res.status(400).json({ message: "Failed to create result" });
     }
     res.status(200).json({ message: "Result Created successfully." });
@@ -35,15 +35,15 @@ export const deleteResult = async (req, res) => {
     const { examId } = req.body;
     const teacherId = req.user.userId;
 
-    const exam = Exam.findById(examId);
+    const exam = await Exam.findById(examId);
 
-    if (exam.teacherId !== teacherId) {
+    if (exam.teacherId != teacherId) {
       res
         .status(401)
         .json({ message: "You are Not Authorized to delete These Results!" });
     }
 
-    const deletedResults = Result.deleteMany({ examId: examId });
+    const deletedResults = await Result.deleteMany({ examId: examId });
 
     if (!deletedResults) {
       return res.status(500).json({ message: "Failed to delete results" });
@@ -58,32 +58,31 @@ export const deleteResult = async (req, res) => {
 };
 
 export const viewResult = async (req, res) => {
-  // Inputs : None
-  // Other Inputs : userId from req.user.userId and isadmin from req.user.isadmin
-  // If isadmin is true then send all results otherwise send results of userId
+  // Inputs: None
+  // Other Inputs: userId from req.user.userId and isadmin from req.user.isadmin
+  // If isadmin is true, send all results; otherwise, send results of userId
 
   try {
     const userId = req.user.userId;
     const isadmin = req.user.isadmin;
 
-    if (isadmin) {
-      const results = Result.find();
-      if (!results) {
-        res.status(500).json({ message: "Error while fetching results" });
-      }
-      res
-        .status(200)
-        .json({ message: "Results fetched Sucessfully.", results });
-    }
+    // Determine the query based on the user's admin status
+    const query = isadmin ? {} : { studentId: userId };
 
-    const results = Result.find({ studentId: userId });
+    // Fetch results based on the query
+    const results = await Result.find(query);
 
     if (!results) {
-      res.status(500).json({ message: "Error while fetching results" });
+      return res.status(404).json({ message: "No results found." });
     }
-    res.status(200).json({ message: "Results fetched Sucessfully.", results });
+
+    // Send results back to the client
+    return res
+      .status(200)
+      .json({ message: "Results fetched successfully.", results });
   } catch (error) {
-    res
+    // Handle unexpected errors
+    return res
       .status(500)
       .json({ message: "Error while fetching results", error: error.message });
   }

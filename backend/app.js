@@ -3,6 +3,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import connectDB from "./utils/database.js";
 import userRoutes from "./routes/userRoutes.js";
+import examRoutes from "./routes/examRoutes.js";
+import resultRoutes from "./routes/resultRoutes.js";
 
 const app = express();
 
@@ -17,6 +19,8 @@ connectDB();
 
 // Routes
 app.use("/user", userRoutes);
+app.use("/exam", examRoutes);
+app.use("/result", resultRoutes);
 
 app.get("/", (req, res) => {
   res.send("Home Page");

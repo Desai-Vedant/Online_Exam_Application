@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 // Middleware to verify token
-export const authenticateToken = (req, res, next) => {
+const authenticateToken = (req, res, next) => {
   const token = req.cookies.token; // Extract token
 
   if (!token) {
@@ -16,3 +16,5 @@ export const authenticateToken = (req, res, next) => {
     next();
   });
 };
+
+export default authenticateToken;
