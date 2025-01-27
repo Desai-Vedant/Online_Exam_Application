@@ -1,5 +1,10 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import LoginPage from "../components/LoginPage";
 import RegisterPage from "../components/RegisterPage";
 import MenuAppBar from "../components/MenuAppBar";
@@ -28,6 +33,7 @@ function App() {
           </Route>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </Router>
     </div>
